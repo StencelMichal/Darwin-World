@@ -1,14 +1,10 @@
 package agh.cs.lab;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Animal extends AbstractWorldElement{
 
-    private final List<IPositionChangeObserver> observers = new ArrayList<>();
-
-    private MapDirection direction;
+    private final List<IAnimalChangeObserver> observers = new ArrayList<>();
 
     private final static Random generator = new Random();
 
@@ -16,7 +12,14 @@ public class Animal extends AbstractWorldElement{
 
     protected final Genotype genotype;
 
+    private MapDirection direction;
+
+    private long childrenAmount;
+
+    private int lifeLength = 0;
+
     private float energy;
+
 
     public Animal(AbstractWorldMap map, Vector2d initialPosition, float startEnergy){
         super(initialPosition);
@@ -32,8 +35,12 @@ public class Animal extends AbstractWorldElement{
         this.direction = MapDirection.values()[generator.nextInt(8)];
         this.genotype = new Genotype(parent1.getGenotype(), parent2.getGenotype());
         this.energy = 0;
+        this.childrenAmount = 0;
+        lifeLength = 0;
         transferEnergy(parent1, this);
         transferEnergy(parent2, this);
+        parent1.newChild();
+        parent2.newChild();
     }
 
     private static Vector2d childPosition(AbstractWorldMap map, Animal parent1) {
@@ -59,11 +66,10 @@ public class Animal extends AbstractWorldElement{
         child.addEnergy(energy);
     }
 
-    public Genotype getGenotype() {
-        // niemodyfikowalność ??
-        return genotype;
-    }
 
+    public int[] getGenotype() {
+        return Arrays.copyOf(genotype.getGenes(), genotype.getGenes().length);
+    }
 
     public MapDirection getDirection() {
         return direction;
@@ -86,9 +92,12 @@ public class Animal extends AbstractWorldElement{
         energy += amount;
     }
 
-    @Override
-    public String toString() {
-        return direction.toString();
+    public int getLifeLength() {
+        return lifeLength;
+    }
+
+    public long getChildrenAmount() {
+        return childrenAmount;
     }
 
     public void move(){
@@ -103,19 +112,58 @@ public class Animal extends AbstractWorldElement{
         positionChanged(positionBeforeMove);
     }
 
-    public void addObserver(IPositionChangeObserver observer){
+    public void newChild(){
+        childrenAmount++;
+    }
+
+    public void nextDay(){
+        lifeLength++;
+    }
+
+    public void addObserver(IAnimalChangeObserver observer){
         observers.add(observer);
     }
 
-    void removeObserver(IPositionChangeObserver observer){
+    void removeObserver(IAnimalChangeObserver observer){
         observers.remove(observer);
     }
 
-
     private void positionChanged(Vector2d oldPosition){
-        for (IPositionChangeObserver observer : observers) {
+        for (IAnimalChangeObserver observer : observers) {
             observer.positionChanged(oldPosition, this);
         }
+    }
+
+    public boolean checkIfDead(){
+        if(energy == 0){
+            for (IAnimalChangeObserver observer : observers) {
+                observer.animalDead(this);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return direction.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return Float.compare(animal.energy, energy) == 0 &&
+                Objects.equals(observers, animal.observers) &&
+                direction == animal.direction &&
+                Objects.equals(map, animal.map) &&
+                Objects.equals(genotype, animal.genotype);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(observers, direction, map, genotype, energy);
     }
 
 

@@ -9,6 +9,8 @@ public class Genotype {
 
     private final Random generator = new Random();
 
+    private boolean[] ifGenePresent = new boolean[8];
+
     public Genotype() {
          for( int i=0; i<8; i++){
              genes[i] = i;
@@ -19,34 +21,31 @@ public class Genotype {
          }
     }
 
-    public int[] getGenes() {
-        return genes;
-    }
-
-    public Genotype(Genotype g1, Genotype g2){
-        int[] parentGenes1 = g1.getGenes();
-        int[] parentGenes2 = g2.getGenes();
+    public Genotype(int[] parentGenes1, int[] parentGenes2) {
         int cut1 = generator.nextInt(30) + 1;
         int cut2 = generator.nextInt(32 - cut1 - 1) + 1 + cut1;
         System.arraycopy(parentGenes1, 0, this.genes, 0, cut1);
-        if (cut2 - cut1 >= 0) System.arraycopy(parentGenes2, cut1, this.genes, cut1, cut2 - cut1);
-        if (32 - cut2 >= 0) System.arraycopy(parentGenes1, cut2, this.genes, cut2, 32 - cut2);
-        Arrays.sort(this.genes);
-        boolean[] ifGenePresent = new boolean[8];
-        for (int gene : genes) {
-            ifGenePresent[gene] = true;
-        }
-        while(!areAllGenesPresent(ifGenePresent)){
-            //trzeba poprawić - czasem szuka w nieskończoność
-            for (int i=0; i<8; i++){
-                if(!ifGenePresent[i]){
+        System.arraycopy(parentGenes2, cut1, this.genes, cut1, cut2 - cut1);
+        System.arraycopy(parentGenes1, cut2, this.genes, cut2, 32 - cut2);
+        while (!areAllGenesPresent()) {
+            for (int i = 0; i < 8; i++) {
+                if (!ifGenePresent[i]) {
                     genes[generator.nextInt(32)] = i;
                 }
             }
         }
+        Arrays.sort(this.genes);
     }
 
-    private boolean areAllGenesPresent(boolean[] ifGenePresent) {
+    public int[] getGenes() {
+        return genes;
+    }
+
+    private boolean areAllGenesPresent() {
+        for (int gene : genes) {
+            ifGenePresent[gene] = true;
+        }
+
         for (boolean gene : ifGenePresent) {
             if (!gene) {
                 return false;
