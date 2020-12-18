@@ -130,7 +130,7 @@ public class GrassField {
         for (int x = startPosition.x; x < width; x++)
             for (int y = startPosition.y; y < height; y++) {
                 Vector2d position = new Vector2d(x, y);
-                if (map.objectAt(position) == null) {
+                if (!map.isOccupied(position)) {
                     unoccupied.add(position);
                 }
             }

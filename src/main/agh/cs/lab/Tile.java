@@ -10,14 +10,16 @@ public class Tile extends StackPane {
     private final int x;
     private final int y;
     private final float startEnergy;
-    private Rectangle border;
-    private Text text = new Text();
+    private final Rectangle border;
+    private final Text text = new Text();
+    private final Visualizer visualizer;
 
-    public Tile(int x, int y, int tileSize, float startEnergy) {
+    public Tile(int x, int y, int tileSize, float startEnergy, Visualizer visualizer) {
+        this.visualizer = visualizer;
         this.x = x;
         this.y = y;
         this.startEnergy = startEnergy;
-        border = new Rectangle(tileSize, tileSize);
+        border = new Rectangle(tileSize-1, tileSize-1);
 
 
         border.setStroke(Color.LIGHTGRAY);
@@ -31,7 +33,8 @@ public class Tile extends StackPane {
         setTranslateX(x * tileSize);
         setTranslateY(y * tileSize);
 
-        //setOnMouseClicked(e -> open());
+        setOnMouseClicked(e -> visualizer.trackOnPosition(new Vector2d(x,y)));
+
     }
 
     public void updateTile(AbstractWorldElement element) {
@@ -47,34 +50,5 @@ public class Tile extends StackPane {
             border.setFill(Color.hsb(hue, 1.0, 1.0));
         }
     }
-
-
-    // sledzenie statystyk
-//        public void open() {
-//            if (isOpen)
-//                return;
-//
-////            if (hasBomb) {
-////                System.out.println("Game Over");
-////                scene.setRoot(createContent());
-////                return;
-////            }
-//
-//            isOpen = true;
-//            text.setVisible(true);
-//            border.setFill(null);
-//
-//            if (text.getText().isEmpty()) {
-//                getNeighbors(this).forEach(Tile::open);
-//            }
-//        }
-//    }
-
-//    public void start(Stage stage) throws Exception {
-//        scene = new Scene(createContent());
-//
-//        stage.setScene(scene);
-//        stage.show();
-//    }
 
 }

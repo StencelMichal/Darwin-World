@@ -9,7 +9,7 @@ public class Genotype {
 
     private final Random generator = new Random();
 
-    private boolean[] ifGenePresent = new boolean[8];
+    private final boolean[] ifGenePresent = new boolean[8];
 
     public Genotype() {
          for( int i=0; i<8; i++){
@@ -21,7 +21,9 @@ public class Genotype {
          }
     }
 
-    public Genotype(int[] parentGenes1, int[] parentGenes2) {
+    public Genotype(Genotype g1, Genotype g2) {
+        int[] parentGenes1 = g1.getGenes();
+        int[] parentGenes2 = g2.getGenes();
         int cut1 = generator.nextInt(30) + 1;
         int cut2 = generator.nextInt(32 - cut1 - 1) + 1 + cut1;
         System.arraycopy(parentGenes1, 0, this.genes, 0, cut1);
@@ -38,7 +40,20 @@ public class Genotype {
     }
 
     public int[] getGenes() {
-        return genes;
+        return genes.clone();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Genotype genotype = (Genotype) o;
+        return Arrays.equals(genes, genotype.genes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(genes);
     }
 
     private boolean areAllGenesPresent() {

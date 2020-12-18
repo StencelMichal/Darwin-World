@@ -38,13 +38,14 @@ public class TorusMap extends AbstractWorldMap {
     @Override
     public boolean place(Animal animal) {
         animals.put(animal.getPosition(), animal);
-        animal.addObserver(this);
-        animal.addObserver(statistics);
+        animal.addMoveObserver(this);
+        animal.addDeadObserver(this);
+        animal.addDeadObserver(statistics);
         return true;
     }
 
     public void eatGrass(float energyFromGrass){
-        for(Vector2d position : animals.keys()){
+        for(Vector2d position : animals.keySet()){
             Grass grass = this.grass.grassAt(position);
             if (grass != null) {
                 NavigableSet<Animal> animalsOnField = this.animals.get(position);

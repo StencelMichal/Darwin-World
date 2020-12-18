@@ -1,5 +1,9 @@
 package agh.cs.lab;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 public enum MapDirection {
     NORTH,
     NORTH_EAST,
@@ -73,6 +77,13 @@ public enum MapDirection {
 
         return ret;
     }
+
+    public static ArrayList<MapDirection> randomizedDirections(){
+        ArrayList<MapDirection> directions = new ArrayList<>(Arrays.asList(MapDirection.values()));
+        Collections.shuffle(directions);
+        return directions;
+    }
+
 
 //    public MapDirection previous(){
 //        MapDirection ret = null;

@@ -1,13 +1,10 @@
 package agh.cs.lab;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.List;
+import java.util.*;
 
-public class MapStatistics implements IAnimalChangeObserver {
+public class MapStatistics implements IAnimalDeadObserver{
 
-    private long day;
+    private MutableInt day;
 
     private long animalsAmount;
 
@@ -15,21 +12,23 @@ public class MapStatistics implements IAnimalChangeObserver {
 
     private int grassAmount;
 
-    private int[] DominantGenes;
-
     private double averageEnergy;
 
     private double averageLifeLength;
 
     private double averageChildrenAmount;
 
-    public MapStatistics(int animalsAmount) {
+    private final HashMap<Genotype, Integer> dominantGenotypes;
+
+    public MapStatistics(int animalsAmount, MutableInt day) {
+        this.day = day;
         this.animalsAmount = animalsAmount;
         this.grassAmount = 0;
         this.averageEnergy = 0;
         this.averageLifeLength = 0;
         this.averageChildrenAmount = 0;
         this.deadAnimalsAmount = 0;
+        this.dominantGenotypes = new HashMap<>();
     }
 
     public void update(List<Animal> animals, int newGrassAmount) {
@@ -39,12 +38,52 @@ public class MapStatistics implements IAnimalChangeObserver {
             newAverageEnergy += animal.getEnergy();
             newAverageChildrenAmount += animal.getChildrenAmount();
         }
+        newAverageEnergy /= animals.size();
 
         animalsAmount = animals.size();
         averageEnergy = Math.round(newAverageEnergy * 100.0) / 100.0;
         averageChildrenAmount = Math.round(newAverageChildrenAmount * 100.0 / animalsAmount) / 100.0;
-        day++;
         grassAmount = newGrassAmount;
+        addCurrentDominantGenotype(animals);
+    }
+
+    public void addCurrentDominantGenotype(List<Animal> animals){
+        Genotype dominantGenotype = new Genotype();
+        HashMap<Genotype, Integer> currentGenotypes = new HashMap<>();
+        for (Animal animal : animals) {
+            Genotype genotype = animal.getGenotype();
+            if(currentGenotypes.containsKey(genotype)){
+                currentGenotypes.put(genotype, currentGenotypes.get(genotype) + 1);
+            }
+            else{
+                currentGenotypes.put(genotype, 1);
+            }
+        }
+
+        if(dominantGenotypes.containsKey(dominantGenotype)){
+            dominantGenotypes.put(dominantGenotype, dominantGenotypes.get(dominantGenotype) + 1);
+        }
+        else{
+            dominantGenotypes.put(dominantGenotype, 1);
+        }
+    }
+
+    private String getDominantGenotype(){
+        Genotype dominantGenotype = new Genotype();
+        int maxAmount = 0;
+        for (Map.Entry<Genotype, Integer> integerEntry : dominantGenotypes.entrySet()) {
+            if(integerEntry.getValue() > maxAmount){
+                maxAmount = integerEntry.getValue();
+                dominantGenotype = integerEntry.getKey();
+            }
+        }
+        StringBuilder ret = new StringBuilder(" ");
+        for (int gene : dominantGenotype.getGenes()) {
+            ret.append(gene).append(" ");
+        }
+
+        return ret.toString();
+
     }
 
     @Override
@@ -56,12 +95,10 @@ public class MapStatistics implements IAnimalChangeObserver {
                 "Amount of grass: " + grassAmount + "\n" +
                 "Average energy: " + averageEnergy + "\n" +
                 "Average length of life: " + averageLifeLength + "\n" +
-                "Average number of children: " + averageChildrenAmount + "\n";
+                "Average number of children: " + averageChildrenAmount + "\n" +
+                "Dominant genotype: "+ "\n" +
+                getDominantGenotype() + "\n";
 
-    }
-
-    @Override
-    public void positionChanged(Vector2d oldPosition, Animal o) {
     }
 
     @Override

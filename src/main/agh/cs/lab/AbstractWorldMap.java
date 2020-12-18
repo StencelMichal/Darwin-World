@@ -4,7 +4,7 @@ import com.google.common.collect.TreeMultimap;
 
 import java.util.*;
 
-abstract class AbstractWorldMap implements IWorldMap, IAnimalChangeObserver {
+abstract class AbstractWorldMap implements IWorldMap, IAnimalChangeObserver, IAnimalDeadObserver {
 
     private final MapVisualizer mapVisualizer = new MapVisualizer(this);
 
@@ -45,10 +45,10 @@ abstract class AbstractWorldMap implements IWorldMap, IAnimalChangeObserver {
 
     public ArrayList<Animal> copulate(float copulateEnergy){
         ArrayList<Animal> newAnimals = new ArrayList<>();
-        for( Vector2d position : this.animals.keys()){
+        for( Vector2d position : this.animals.keySet()){
             NavigableSet<Animal> animalsOnField = this.animals.get(position);
             if( animalsOnField.size() > 1){
-                Iterator<Animal> iterator = animalsOnField.iterator();
+                Iterator<Animal> iterator = animalsOnField.descendingIterator();
                 Animal parent1 = iterator.next();
                 Animal parent2 = iterator.next();
                 if(parent1.getEnergy() >= copulateEnergy && parent2.getEnergy() >= copulateEnergy){

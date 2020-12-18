@@ -10,22 +10,35 @@ public class SimulationEngine implements IEngine{
 
     private final float energyFromGrass;
 
-    private final float startEnergy;
+    private final float copulateEnergy;
 
     private final TorusMap map;
 
-    public SimulationEngine(TorusMap map, int amountOfAnimals, float moveEnergy, float startEnergy, float plantEnergy){
+    private final AnimalTracker tracker;
+
+    public SimulationEngine(TorusMap map, int startAnimals, float moveEnergy,
+                            float startEnergy, float plantEnergy, AnimalTracker tracker){
+        this.tracker = tracker;
         this.moveEnergy = moveEnergy;
-        this.startEnergy = startEnergy;
         this.energyFromGrass = plantEnergy;
         this.map = map;
+        this.copulateEnergy = startEnergy / 2;
+
+        if(map.getHeight() * map.getWidth() < startAnimals){
+            throw new IllegalArgumentException("Map is to small");
+        }
+
         Random generator = new Random();
-        for(int i=0; i<amountOfAnimals; i++){
-            // tylko 1 zwierze na 1 pozycje
+        HashSet<Vector2d> positions = new HashSet<>();
+        while(positions.size() < startAnimals){
             int x = generator.nextInt(map.getWidth());
             int y = generator.nextInt(map.getHeight());
-            Vector2d initialPosition = new Vector2d(x, y);
-            Animal animal = new Animal(map, initialPosition, startEnergy);
+            positions.add(new Vector2d(x, y));
+        }
+
+        for (Vector2d position : positions) {
+            Animal animal = new Animal(map, position, startEnergy);
+            animal.addDeadObserver(tracker);
             map.place(animal);
             animals.add(animal);
         }
@@ -36,33 +49,29 @@ public class SimulationEngine implements IEngine{
 
 
         // Remove dead animals
-//        System.out.println("usuwanie");
         animals.removeIf(Animal::checkIfDead);
 
-        //animal move
-//        System.out.println("ruch");
+        //move
         for (Animal animal : animals) {
             animal.move();
         }
 
-        // jedzenie
-//        System.out.println("jedzenie");
+        // eat
         map.eatGrass(energyFromGrass);
 
-        // rozmanżanie
-//        System.out.println("rozmnażanie");
-        ArrayList<Animal> newAnimals = map.copulate(startEnergy / 2);
+        // copulate
+        ArrayList<Animal> newAnimals = map.copulate(copulateEnergy);
         for (Animal newAnimal : newAnimals) {
             map.place(newAnimal);
+            newAnimal.addDeadObserver(tracker);
+            tracker.checkIfDescendant(newAnimal);
         }
         animals.addAll(newAnimals);
 
-        //dodanie nowych roślin
-//        System.out.println("dodwanie trawy");
+        // new plants
         map.addGrass();
 
-        //utrata energii przez zwierzeta
-//        System.out.println("utrata energii");
+        // subtract move energy
         for (Animal animal : animals) {
             animal.subtractEnergy(moveEnergy);
         }

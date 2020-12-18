@@ -1,25 +1,32 @@
 package agh.cs.lab;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TimeZone;
 
-public class Main {
+public class Main extends Application{
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws Exception {
+        launch(args);
     }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        JSONParser parser = new JSONParser();
+        String jsonPath = new File("").getAbsolutePath();
+        Reader reader = new FileReader(jsonPath + "/src/main/agh/cs/lab/parameters.json");
+        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+        int visualizations = (int) (long) jsonObject.get("numberOfVisualizations");
+        for(int i=0; i<visualizations; i++){
+            Stage stage = new Stage();
+            Application world = World.class.newInstance();
+            world.start(stage);
+        }
+    }
 }

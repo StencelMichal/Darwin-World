@@ -1,10 +1,16 @@
 package agh.cs.lab;
 
+import javafx.util.Pair;
+
 import java.util.*;
 
 public class Animal extends AbstractWorldElement{
 
-    private final List<IAnimalChangeObserver> observers = new ArrayList<>();
+    private final List<IAnimalChangeObserver> moveObservers = new ArrayList<>();
+
+    private final List<IAnimalDeadObserver> deadObservers = new ArrayList<>();
+
+    private Pair<Animal,Animal> parents;
 
     private final static Random generator = new Random();
 
@@ -14,7 +20,7 @@ public class Animal extends AbstractWorldElement{
 
     private MapDirection direction;
 
-    private long childrenAmount;
+    private long childrenAmount = 0;
 
     private int lifeLength = 0;
 
@@ -31,6 +37,7 @@ public class Animal extends AbstractWorldElement{
 
     public Animal(AbstractWorldMap map, Animal parent1, Animal parent2){
         super(childPosition(map, parent1));
+        this.parents = new Pair<>(parent1,parent2);
         this.map = map;
         this.direction = MapDirection.values()[generator.nextInt(8)];
         this.genotype = new Genotype(parent1.getGenotype(), parent2.getGenotype());
@@ -46,7 +53,7 @@ public class Animal extends AbstractWorldElement{
     private static Vector2d childPosition(AbstractWorldMap map, Animal parent1) {
         Vector2d parentPosition = parent1.getPosition();
         Vector2d childPosition = null;
-        for(MapDirection direction : MapDirection.values()){
+        for(MapDirection direction : MapDirection.randomizedDirections()){
             Vector2d possibleDirection = parentPosition.add(direction.toUnitVector());
             if(!map.isOccupied(possibleDirection)){
                 childPosition = possibleDirection;
@@ -67,8 +74,8 @@ public class Animal extends AbstractWorldElement{
     }
 
 
-    public int[] getGenotype() {
-        return Arrays.copyOf(genotype.getGenes(), genotype.getGenes().length);
+    public Genotype getGenotype() {
+        return genotype;
     }
 
     public MapDirection getDirection() {
@@ -82,6 +89,12 @@ public class Animal extends AbstractWorldElement{
     public float getEnergy() {
         return energy;
     }
+
+    public Pair<Animal, Animal> getParents() {
+        return parents;
+    }
+
+
 
     public void subtractEnergy(float amount){
         energy -= amount;
@@ -120,23 +133,27 @@ public class Animal extends AbstractWorldElement{
         lifeLength++;
     }
 
-    public void addObserver(IAnimalChangeObserver observer){
-        observers.add(observer);
+    public void addMoveObserver(IAnimalChangeObserver observer){
+        moveObservers.add(observer);
+    }
+
+    public void addDeadObserver(IAnimalDeadObserver observer){
+        deadObservers.add(observer);
     }
 
     void removeObserver(IAnimalChangeObserver observer){
-        observers.remove(observer);
+        moveObservers.remove(observer);
     }
 
     private void positionChanged(Vector2d oldPosition){
-        for (IAnimalChangeObserver observer : observers) {
+        for (IAnimalChangeObserver observer : moveObservers) {
             observer.positionChanged(oldPosition, this);
         }
     }
 
     public boolean checkIfDead(){
         if(energy == 0){
-            for (IAnimalChangeObserver observer : observers) {
+            for (IAnimalDeadObserver observer : deadObservers) {
                 observer.animalDead(this);
             }
             return true;
@@ -149,22 +166,18 @@ public class Animal extends AbstractWorldElement{
         return direction.toString();
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return Float.compare(animal.energy, energy) == 0 &&
-                Objects.equals(observers, animal.observers) &&
-                direction == animal.direction &&
-                Objects.equals(map, animal.map) &&
+        return Objects.equals(parents, animal.parents) &&
                 Objects.equals(genotype, animal.genotype);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(observers, direction, map, genotype, energy);
+        return Objects.hash(parents, genotype);
     }
-
-
 }

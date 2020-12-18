@@ -10,7 +10,7 @@ public class GenotypeTest {
         for (int i = 0; i < 10000; i++) {
             Genotype g1 = new Genotype();
             Genotype g2 = new Genotype();
-            Genotype g3 = new Genotype(g1.getGenes(), g2.getGenes());
+            Genotype g3 = new Genotype(g1, g2);
             int[] genes = g3.getGenes();
             boolean[] ifGenePresent = new boolean[8];
             for (int j = 0; j < 32; j++) {

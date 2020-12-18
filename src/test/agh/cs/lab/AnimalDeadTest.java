@@ -7,7 +7,7 @@ public class AnimalDeadTest {
 
     @Test
     public void animalDeadTest(){
-        MapStatistics statistics = new MapStatistics(1);
+        MapStatistics statistics = new MapStatistics(1,new MutableInt());
         TorusMap map = new TorusMap(2, 2, (float) 0.5, statistics);
         Vector2d position = new Vector2d(1, 1);
         Animal animal = new Animal(map, position, 0);
