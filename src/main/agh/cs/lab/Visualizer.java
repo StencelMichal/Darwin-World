@@ -26,7 +26,7 @@ public class Visualizer {
 
     private final Text trackerText;
 
-    private final MapStatistics statistics;
+    private final Statistics statistics;
 
     private BooleanHolder stopped;
 
@@ -34,7 +34,7 @@ public class Visualizer {
 
 
     public Visualizer(IWorldMap map, Stage stage, int width, int height, float startEnergy,
-                      MapStatistics statistics, BooleanHolder stopped, MutableInt day, AnimalTracker tracker) {
+                      Statistics statistics, BooleanHolder stopped, MutableInt day, AnimalTracker tracker) {
         xTiles = width;
         yTiles = height;
         this.map = map;

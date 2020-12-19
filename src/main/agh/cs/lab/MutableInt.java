@@ -2,7 +2,15 @@ package agh.cs.lab;
 
 public class MutableInt {
 
-    private int value = 0;
+    private int value;
+
+    public MutableInt(int value) {
+        this.value = value;
+    }
+
+    public MutableInt(){
+        this(0);
+    }
 
     public void increment(){
         value++;

@@ -7,5 +7,6 @@
   "plantEnergy" : 50,
   "moveEnergy" : 5.0,
   "timeGap" : 200,
-  "numberOfVisualizations" : 1
+  "numberOfVisualizations" : 1,
+  "numberOfDays" : 10
 }

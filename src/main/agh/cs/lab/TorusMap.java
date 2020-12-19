@@ -10,14 +10,14 @@ public class TorusMap extends AbstractWorldMap {
 
     private final GrassField grass;
 
-    private final MapStatistics statistics;
+    private final Statistics statistics;
 
     /*
     Jungla jest usytuowana w lewym dolnym rogu dla wygody obsługi,
     ale ze względu na "zawijanie" się naszej mapy mozemy sprawić żeby w wizualizacji znalazła się na środku
      */
 
-    public TorusMap(int width, int height, float jungleRatio, MapStatistics statistics) {
+    public TorusMap(int width, int height, float jungleRatio, Statistics statistics) {
         super();
         this.width = width;
         this.height = height;

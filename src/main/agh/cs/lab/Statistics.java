@@ -2,9 +2,9 @@ package agh.cs.lab;
 
 import java.util.*;
 
-public class MapStatistics implements IAnimalDeadObserver{
+public class Statistics implements IAnimalDeadObserver{
 
-    private MutableInt day;
+    private final MutableInt day;
 
     private long animalsAmount;
 
@@ -20,7 +20,7 @@ public class MapStatistics implements IAnimalDeadObserver{
 
     private final HashMap<Genotype, Integer> dominantGenotypes;
 
-    public MapStatistics(int animalsAmount, MutableInt day) {
+    public Statistics(int animalsAmount, MutableInt day) {
         this.day = day;
         this.animalsAmount = animalsAmount;
         this.grassAmount = 0;
@@ -47,6 +47,30 @@ public class MapStatistics implements IAnimalDeadObserver{
         addCurrentDominantGenotype(animals);
     }
 
+    public long getAnimalsAmount() {
+        return animalsAmount;
+    }
+
+    public long getDeadAnimalsAmount() {
+        return deadAnimalsAmount;
+    }
+
+    public int getGrassAmount() {
+        return grassAmount;
+    }
+
+    public double getAverageEnergy() {
+        return averageEnergy;
+    }
+
+    public double getAverageLifeLength() {
+        return averageLifeLength;
+    }
+
+    public double getAverageChildrenAmount() {
+        return averageChildrenAmount;
+    }
+
     public void addCurrentDominantGenotype(List<Animal> animals){
         Genotype dominantGenotype = new Genotype();
         HashMap<Genotype, Integer> currentGenotypes = new HashMap<>();
@@ -68,7 +92,7 @@ public class MapStatistics implements IAnimalDeadObserver{
         }
     }
 
-    private String getDominantGenotype(){
+    public String getDominantGenotype(){
         Genotype dominantGenotype = new Genotype();
         int maxAmount = 0;
         for (Map.Entry<Genotype, Integer> integerEntry : dominantGenotypes.entrySet()) {
