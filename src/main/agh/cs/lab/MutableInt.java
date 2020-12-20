@@ -20,6 +20,10 @@ public class MutableInt {
         value--;
     }
 
+    public void change(int newValue){
+        value = newValue;
+    }
+
     public int getValue() {
         return value;
     }

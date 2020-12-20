@@ -22,7 +22,7 @@ public class Main extends Application{
         String jsonPath = new File("").getAbsolutePath();
         Reader reader = new FileReader(jsonPath + "/src/main/agh/cs/lab/parameters.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
-        int visualizations = (int) (long) jsonObject.get("numberOfVisualizations");
+        int visualizations = (int) (long) jsonObject.get("numberOfSimulations");
         for(int i=0; i<visualizations; i++){
             Stage stage = new Stage();
             Application world = World.class.newInstance();

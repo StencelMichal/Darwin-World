@@ -72,4 +72,17 @@ public class Genotype {
     public int randomGene(){
         return genes[generator.nextInt(32)];
     }
+
+    @Override
+    public String toString() {
+        StringBuilder ret = new StringBuilder();
+        for(int i=0; i<16; i++){
+            ret.append(genes[i]).append(" ");
+        }
+        ret.append("\n");
+        for(int i=16; i<32; i++){
+            ret.append(genes[i]).append(" ");
+        }
+        return ret.toString();
+    }
 }

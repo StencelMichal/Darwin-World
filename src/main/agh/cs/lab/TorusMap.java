@@ -12,10 +12,6 @@ public class TorusMap extends AbstractWorldMap {
 
     private final Statistics statistics;
 
-    /*
-    Jungla jest usytuowana w lewym dolnym rogu dla wygody obsługi,
-    ale ze względu na "zawijanie" się naszej mapy mozemy sprawić żeby w wizualizacji znalazła się na środku
-     */
 
     public TorusMap(int width, int height, float jungleRatio, Statistics statistics) {
         super();
@@ -41,6 +37,7 @@ public class TorusMap extends AbstractWorldMap {
         animal.addMoveObserver(this);
         animal.addDeadObserver(this);
         animal.addDeadObserver(statistics);
+        statistics.addGenotype(animal.getGenotype());
         return true;
     }
 

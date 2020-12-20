@@ -57,7 +57,7 @@ public class AverageStatistics {
             writer.write("Energy per animal: " + round(averageEnergy) + "\n");
             writer.write("Life length: " + round(averageLifeLength) + "\n");
             writer.write("Number of children: " + round(averageChildrenAmount) + "\n");
-            writer.write("Dominant genotype: " + "\n" + statistics.getDominantGenotype() + "\n");
+            writer.write("Dominant genotype: " + "\n" + statistics.getDominantGenotype().toString() + "\n");
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

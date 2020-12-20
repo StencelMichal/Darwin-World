@@ -9,13 +9,15 @@ import org.json.simple.parser.ParseException;
 import java.awt.*;
 import java.io.*;
 
-public class World extends Application{
+public class World extends Application {
 
     private final BooleanHolder stopped = new BooleanHolder();
 
     private final MutableInt day = new MutableInt();
 
-    public static void main(String[] args)  {
+    private final MutableInt timeGap = new MutableInt(2000);
+
+    public static void main(String[] args) {
         launch(args);
     }
 
@@ -27,37 +29,37 @@ public class World extends Application{
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
         int width = (int) (long) jsonObject.get("width");
-        int height= (int) (long) jsonObject.get("height");
+        int height = (int) (long) jsonObject.get("height");
         float jungleRatio = (float) (double) jsonObject.get("jungleRatio");
         int startEnergy = (int) (long) jsonObject.get("startEnergy");
         int plantEnergy = (int) (long) jsonObject.get("plantEnergy");
         int startAnimals = (int) (long) jsonObject.get("startAnimals");
         float moveEnergy = (float) (double) jsonObject.get("moveEnergy");
-        int timeGap = (int) (long) jsonObject.get("timeGap");
         int numberOfDays = (int) (long) jsonObject.get("numberOfDays");
 
         Statistics statistics = new Statistics(startAnimals, day);
         AverageStatistics averageStatistics = new AverageStatistics(day);
         AnimalTracker tracker = new AnimalTracker(day);
-        TorusMap map = new TorusMap(width,height, jungleRatio, statistics);
-        SimulationEngine engine = new SimulationEngine(map,startAnimals,moveEnergy,startEnergy,plantEnergy, tracker);
-        Visualizer visualizer = new Visualizer(map,stage,width,height,startEnergy,statistics, stopped, day, tracker);
+        TorusMap map = new TorusMap(width, height, jungleRatio, statistics);
+        SimulationEngine engine = new SimulationEngine(map, startAnimals, moveEnergy, startEnergy, plantEnergy, tracker);
+        Visualizer visualizer = new Visualizer(map, stage, width, height, startEnergy, statistics, stopped, day, tracker, timeGap);
+//
 
 
         new Thread(() -> {
             while (day.getValue() < numberOfDays) {
+                try {
+                    Thread.sleep(timeGap.getValue());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 day.increment();
                 engine.nextDay();
                 statistics.update(engine.getAnimals(), engine.getCurrentAmountOfGrass());
                 averageStatistics.update(statistics);
                 visualizer.update();
-                try {
-                    Thread.sleep(timeGap);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 while (stopped.getValue()) {
-                    System.out.print("");
+                    Thread.onSpinWait();
                 }
             }
             averageStatistics.saveToFile(statistics);
@@ -67,9 +69,9 @@ public class World extends Application{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else {
-                // dunno, up to you to handle this
             }
+
         }).start();
     }
+
 }

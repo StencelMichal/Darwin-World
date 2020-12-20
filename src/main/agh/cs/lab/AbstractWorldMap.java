@@ -18,21 +18,10 @@ abstract class AbstractWorldMap implements IWorldMap, IAnimalChangeObserver, IAn
         List<AbstractWorldElement> animals = new ArrayList<>(this.animals.values());
         return Collections.unmodifiableList(animals);
     }
-//
-//    @Override
-//    public Object objectAt(Vector2d position) {
-//        for (Map<Vector2d, AbstractWorldElement> elements : listOfElements) {
-//            if (elements.get(position) != null) {
-//                return elements.get(position);
-//            }
-//        }
-//        return null;
-//    }
 
-    // return animal with the most energy on position
     public Animal animalAt(Vector2d position){
         if (animals.get(position).size() > 0)
-            return animals.get(position).last();
+            return animals.get(position).descendingIterator().next();
         else return null;
     }
 

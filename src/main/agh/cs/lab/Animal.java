@@ -7,12 +7,11 @@ import java.util.*;
 public class Animal extends AbstractWorldElement{
 
     private final List<IAnimalChangeObserver> moveObservers = new ArrayList<>();
-
     private final List<IAnimalDeadObserver> deadObservers = new ArrayList<>();
 
-    private Pair<Animal,Animal> parents;
-
     private final static Random generator = new Random();
+
+    private Pair<Animal,Animal> parents;
 
     private final AbstractWorldMap map;
 
@@ -27,27 +26,22 @@ public class Animal extends AbstractWorldElement{
     private float energy;
 
 
-    public Animal(AbstractWorldMap map, Vector2d initialPosition, float startEnergy){
+    public Animal(AbstractWorldMap map, Vector2d initialPosition, float startEnergy, Genotype genotype){
         super(initialPosition);
         this.map = map;
         energy = startEnergy;
-        genotype = new Genotype();
         direction = MapDirection.values()[generator.nextInt(8)];
+        childrenAmount = 0;
+        this.genotype = Objects.requireNonNullElseGet(genotype, Genotype::new);
     }
 
     public Animal(AbstractWorldMap map, Animal parent1, Animal parent2){
-        super(childPosition(map, parent1));
+        this(map,childPosition(map,parent1), 0, new Genotype(parent1.getGenotype(), parent2.getGenotype()));
         this.parents = new Pair<>(parent1,parent2);
-        this.map = map;
-        this.direction = MapDirection.values()[generator.nextInt(8)];
-        this.genotype = new Genotype(parent1.getGenotype(), parent2.getGenotype());
-        this.energy = 0;
-        this.childrenAmount = 0;
-        lifeLength = 0;
-        transferEnergy(parent1, this);
         transferEnergy(parent2, this);
-        parent1.newChild();
+        transferEnergy(parent1, this);
         parent2.newChild();
+        parent1.newChild();
     }
 
     private static Vector2d childPosition(AbstractWorldMap map, Animal parent1) {
@@ -93,8 +87,6 @@ public class Animal extends AbstractWorldElement{
     public Pair<Animal, Animal> getParents() {
         return parents;
     }
-
-
 
     public void subtractEnergy(float amount){
         energy -= amount;

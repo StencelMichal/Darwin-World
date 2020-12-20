@@ -1,5 +1,6 @@
 package agh.cs.lab;
 
+import javafx.scene.effect.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -7,22 +8,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Tile extends StackPane {
-    private final int x;
-    private final int y;
+
     private final float startEnergy;
     private final Rectangle border;
     private final Text text = new Text();
-    private final Visualizer visualizer;
 
     public Tile(int x, int y, int tileSize, float startEnergy, Visualizer visualizer) {
-        this.visualizer = visualizer;
-        this.x = x;
-        this.y = y;
         this.startEnergy = startEnergy;
-        border = new Rectangle(tileSize-1, tileSize-1);
+        border = new Rectangle(tileSize-2, tileSize-2);
+//        border.setStroke(Color.LIGHTGRAY);
 
-
-        border.setStroke(Color.LIGHTGRAY);
+//        border.setFill(Color.hsb(55, 0.65, 0.51));
 
         text.setFont(Font.font(tileSize / 2));
         text.setVisible(false);
@@ -49,6 +45,10 @@ public class Tile extends StackPane {
             double hue = Math.min(((Animal) element).getEnergy() * 100 / (3 * startEnergy), 100);
             border.setFill(Color.hsb(hue, 1.0, 1.0));
         }
+    }
+
+    public void highlight(){
+        border.setFill(Color.hsb(184, 1.0, 0.88));
     }
 
 }

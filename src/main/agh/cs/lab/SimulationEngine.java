@@ -37,7 +37,7 @@ public class SimulationEngine implements IEngine{
         }
 
         for (Vector2d position : positions) {
-            Animal animal = new Animal(map, position, startEnergy);
+            Animal animal = new Animal(map, position, startEnergy, null);
             animal.addDeadObserver(tracker);
             map.place(animal);
             animals.add(animal);

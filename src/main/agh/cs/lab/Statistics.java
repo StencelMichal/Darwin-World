@@ -4,21 +4,17 @@ import java.util.*;
 
 public class Statistics implements IAnimalDeadObserver{
 
+    private final HashMap<Genotype, Integer> genotypes;
+
     private final MutableInt day;
 
-    private long animalsAmount;
-
+    private double averageChildrenAmount;
+    private double averageLifeLength;
     private long deadAnimalsAmount;
-
+    private double averageEnergy;
+    private long animalsAmount;
     private int grassAmount;
 
-    private double averageEnergy;
-
-    private double averageLifeLength;
-
-    private double averageChildrenAmount;
-
-    private final HashMap<Genotype, Integer> dominantGenotypes;
 
     public Statistics(int animalsAmount, MutableInt day) {
         this.day = day;
@@ -28,7 +24,37 @@ public class Statistics implements IAnimalDeadObserver{
         this.averageLifeLength = 0;
         this.averageChildrenAmount = 0;
         this.deadAnimalsAmount = 0;
-        this.dominantGenotypes = new HashMap<>();
+        this.genotypes = new HashMap<>();
+    }
+
+    public long getAnimalsAmount() {
+        return animalsAmount;
+    }
+
+    public int getGrassAmount() {
+        return grassAmount;
+    }
+
+    public double getAverageEnergy() {
+        return averageEnergy;
+    }
+
+    public double getAverageLifeLength() {
+        return averageLifeLength;
+    }
+
+    public Genotype getDominantGenotype(){
+        Genotype dominantGenotype = new Genotype();
+        int maxAmount = 0;
+        for (Map.Entry<Genotype, Integer> integerEntry : genotypes.entrySet()) {
+            if(integerEntry.getValue() > maxAmount){
+                maxAmount = integerEntry.getValue();
+                dominantGenotype = integerEntry.getKey();
+            }
+        }
+
+        return dominantGenotype;
+
     }
 
     public void update(List<Animal> animals, int newGrassAmount) {
@@ -44,71 +70,37 @@ public class Statistics implements IAnimalDeadObserver{
         averageEnergy = Math.round(newAverageEnergy * 100.0) / 100.0;
         averageChildrenAmount = Math.round(newAverageChildrenAmount * 100.0 / animalsAmount) / 100.0;
         grassAmount = newGrassAmount;
-        addCurrentDominantGenotype(animals);
+//        addCurrentDominantGenotype(animals);
     }
 
-    public long getAnimalsAmount() {
-        return animalsAmount;
-    }
-
-    public long getDeadAnimalsAmount() {
-        return deadAnimalsAmount;
-    }
-
-    public int getGrassAmount() {
-        return grassAmount;
-    }
-
-    public double getAverageEnergy() {
-        return averageEnergy;
-    }
-
-    public double getAverageLifeLength() {
-        return averageLifeLength;
-    }
-
-    public double getAverageChildrenAmount() {
-        return averageChildrenAmount;
-    }
-
-    public void addCurrentDominantGenotype(List<Animal> animals){
-        Genotype dominantGenotype = new Genotype();
-        HashMap<Genotype, Integer> currentGenotypes = new HashMap<>();
-        for (Animal animal : animals) {
-            Genotype genotype = animal.getGenotype();
-            if(currentGenotypes.containsKey(genotype)){
-                currentGenotypes.put(genotype, currentGenotypes.get(genotype) + 1);
-            }
-            else{
-                currentGenotypes.put(genotype, 1);
-            }
-        }
-
-        if(dominantGenotypes.containsKey(dominantGenotype)){
-            dominantGenotypes.put(dominantGenotype, dominantGenotypes.get(dominantGenotype) + 1);
-        }
-        else{
-            dominantGenotypes.put(dominantGenotype, 1);
-        }
-    }
-
-    public String getDominantGenotype(){
-        Genotype dominantGenotype = new Genotype();
-        int maxAmount = 0;
-        for (Map.Entry<Genotype, Integer> integerEntry : dominantGenotypes.entrySet()) {
-            if(integerEntry.getValue() > maxAmount){
-                maxAmount = integerEntry.getValue();
-                dominantGenotype = integerEntry.getKey();
-            }
-        }
-        StringBuilder ret = new StringBuilder(" ");
-        for (int gene : dominantGenotype.getGenes()) {
-            ret.append(gene).append(" ");
-        }
-
-        return ret.toString();
-
-    }
+//    public void addCurrentDominantGenotype(List<Animal> animals){
+//        HashMap<Genotype, Integer> currentGenotypes = new HashMap<>();
+//        for (Animal animal : animals) {
+//            Genotype genotype = animal.getGenotype();
+//            if(currentGenotypes.containsKey(genotype)){
+//                currentGenotypes.put(genotype, currentGenotypes.get(genotype) + 1);
+//            }
+//            else{
+//                currentGenotypes.put(genotype, 1);
+//            }
+//        }
+//
+//        Genotype dominantGenotype = new Genotype();
+//        int maxValue = 0;
+//        for (Map.Entry<Genotype, Integer> entry : currentGenotypes.entrySet()) {
+//            if(entry.getValue() > maxValue){
+//                maxValue = entry.getValue();
+//                dominantGenotype = entry.getKey();
+//            }
+//        }
+//
+//        if(genotypes.containsKey(dominantGenotype)){
+//            genotypes.put(dominantGenotype, genotypes.get(dominantGenotype) + 1);
+//        }
+//        else{
+//            genotypes.put(dominantGenotype, 1);
+//        }
+//    }
 
     @Override
     public String toString() {
@@ -121,7 +113,7 @@ public class Statistics implements IAnimalDeadObserver{
                 "Average length of life: " + averageLifeLength + "\n" +
                 "Average number of children: " + averageChildrenAmount + "\n" +
                 "Dominant genotype: "+ "\n" +
-                getDominantGenotype() + "\n";
+                getDominantGenotype().toString() + "\n";
 
     }
 
@@ -132,5 +124,24 @@ public class Statistics implements IAnimalDeadObserver{
         deadAnimalsAmount++;
         averageLifeLength /= deadAnimalsAmount;
         averageLifeLength = Math.round(averageLifeLength * 100.0) / 100.0;
+        removeGenotype(animal.getGenotype());
+    }
+
+    public void addGenotype(Genotype genotype) {
+        if(genotypes.containsKey(genotype)){
+            genotypes.put(genotype, genotypes.get(genotype) + 1);
+        }
+        else {
+            genotypes.put(genotype, 1);
+        }
+    }
+
+    private void removeGenotype(Genotype genotype){
+        if(genotypes.get(genotype) == 1){
+            genotypes.remove(genotype);
+        }
+        else {
+            genotypes.put(genotype, genotypes.get(genotype) - 1);
+        }
     }
 }
