@@ -13,12 +13,9 @@ public class Tile extends StackPane {
     private final Rectangle border;
     private final Text text = new Text();
 
-    public Tile(int x, int y, int tileSize, float startEnergy, Visualizer visualizer) {
+    public Tile(int x, int y, int tileSize, float startEnergy, Visualizer visualizer, int shiftX, int shiftY, int xTiles, int yTiles) {
         this.startEnergy = startEnergy;
-        border = new Rectangle(tileSize-2, tileSize-2);
-//        border.setStroke(Color.LIGHTGRAY);
-
-//        border.setFill(Color.hsb(55, 0.65, 0.51));
+        border = new Rectangle(tileSize - 2, tileSize - 2);
 
         text.setFont(Font.font(tileSize / 2));
         text.setVisible(false);
@@ -29,7 +26,7 @@ public class Tile extends StackPane {
         setTranslateX(x * tileSize);
         setTranslateY(y * tileSize);
 
-        setOnMouseClicked(e -> visualizer.trackOnPosition(new Vector2d(x,y)));
+        setOnMouseClicked(e -> visualizer.trackOnPosition(new Vector2d((x + shiftX) % xTiles, (y + shiftY) % yTiles)));
 
     }
 
@@ -47,7 +44,7 @@ public class Tile extends StackPane {
         }
     }
 
-    public void highlight(){
+    public void highlight() {
         border.setFill(Color.hsb(184, 1.0, 0.88));
     }
 

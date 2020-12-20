@@ -42,7 +42,7 @@ public class World extends Application {
         AnimalTracker tracker = new AnimalTracker(day);
         TorusMap map = new TorusMap(width, height, jungleRatio, statistics);
         SimulationEngine engine = new SimulationEngine(map, startAnimals, moveEnergy, startEnergy, plantEnergy, tracker);
-        Visualizer visualizer = new Visualizer(map, stage, width, height, startEnergy, statistics, stopped, day, tracker, timeGap);
+        Visualizer visualizer = new Visualizer(map, stage, width, height, startEnergy, statistics, stopped, day, tracker, timeGap, jungleRatio);
 //
 
 
@@ -54,6 +54,11 @@ public class World extends Application {
                     e.printStackTrace();
                 }
                 day.increment();
+
+                //
+                System.out.println(map.getAnimals().size());
+
+                //
                 engine.nextDay();
                 statistics.update(engine.getAnimals(), engine.getCurrentAmountOfGrass());
                 averageStatistics.update(statistics);

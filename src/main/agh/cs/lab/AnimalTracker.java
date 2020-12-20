@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public class AnimalTracker implements IAnimalDeadObserver {
 
-    private final HashSet<Animal> Descendants = new HashSet<>();
+    private final HashSet<Animal> Descendants;
 
     private int childrenBeforeTracking;
 
@@ -18,9 +18,12 @@ public class AnimalTracker implements IAnimalDeadObserver {
 
     private boolean dead;
 
+
     public AnimalTracker(MutableInt days) {
         this.day = days;
+        Descendants = new HashSet<>();
     }
+
 
     public void track(Animal animal) {
         this.trackedAnimal = animal;

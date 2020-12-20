@@ -25,13 +25,16 @@ public class Visualizer implements EventHandler<ActionEvent> {
     private static int xTiles;
     private static int yTiles;
 
+    private final Button startStopButton;
+    private final Button trackAnimalButton;
+    private final Button dominantGenotypeButton;
+
+    private final Text statisticsText;
+    private final Text trackerText;
+
     private final IWorldMap map;
 
     private final Pane root;
-
-    private final Button startStopButton;
-
-    private final Button trackAnimalButton;
 
     private Animal selectedAnimal;
 
@@ -39,28 +42,31 @@ public class Visualizer implements EventHandler<ActionEvent> {
 
     private final Tile[][] grid;
 
-    private final Text statisticsText;
-
-    private final Text trackerText;
-
     private final Statistics statistics;
 
-    private BooleanHolder stopped;
+    private final BooleanHolder stopped;
 
     private final AnimalTracker tracker;
 
-    private final Button dominantGenotypeButton;
+    private final int shiftX;
+
+    private final int shiftY;
 
 
-    public Visualizer(IWorldMap map, Stage stage, int width, int height, float startEnergy,
-                      Statistics statistics, BooleanHolder stopped, MutableInt day, AnimalTracker tracker, MutableInt timeGap) {
-        xTiles = width;
-        yTiles = height;
+    public Visualizer(IWorldMap map, Stage stage, int width, int height, float startEnergy, Statistics statistics,
+                      BooleanHolder stopped, MutableInt day, AnimalTracker tracker, MutableInt timeGap, float jungleRatio) {
         this.map = map;
         this.statistics = statistics;
-        grid = new Tile[xTiles][yTiles];
         this.stopped = stopped;
         this.tracker = tracker;
+        System.out.println(width / 2);
+        System.out.println((int) ((width * jungleRatio) / 2));
+        this.shiftX = (width / 2) + (int) ((width * jungleRatio) / 2);
+        System.out.println(shiftX);
+        this.shiftY = (height / 2) + (int) ((height * jungleRatio) / 2);
+        xTiles = width;
+        yTiles = height;
+        this.grid = new Tile[xTiles][yTiles];
 
         Pane root = new Pane();
         this.root = root;
@@ -68,7 +74,7 @@ public class Visualizer implements EventHandler<ActionEvent> {
         int tileSize = Math.min(H / width, H / height);
         for (int x = 0; x < xTiles; x++) {
             for (int y = 0; y < yTiles; y++) {
-                Tile tile = new Tile(x, y, tileSize, startEnergy, this);
+                Tile tile = new Tile(x, y, tileSize, startEnergy, this, shiftX, shiftY, xTiles, yTiles);
                 grid[x][y] = tile;
                 root.getChildren().add(tile);
             }
@@ -97,7 +103,7 @@ public class Visualizer implements EventHandler<ActionEvent> {
         timeGapSlider.setMax(2000);
         timeGapSlider.setMin(20);
         timeGapSlider.setValue(2000);
-        timeGapSlider.setPrefSize(500,30);
+        timeGapSlider.setPrefSize(500, 30);
         timeGapSlider.setBlockIncrement(10);
         timeGapSlider.setMajorTickUnit(200);
         timeGapSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -116,9 +122,9 @@ public class Visualizer implements EventHandler<ActionEvent> {
 
 
     public void update() {
-        for (int i = 0; i < xTiles; i++) {
-            for (int j = 0; j < yTiles; j++) {
-                grid[i][j].updateTile(map.objectAt(new Vector2d(i, j)));
+        for (int x = 0; x < xTiles; x++) {
+            for (int y = 0; y < yTiles; y++) {
+                grid[x][y].updateTile(map.objectAt(new Vector2d((x + shiftX) % xTiles, (y + shiftY) % yTiles)));
             }
         }
 
@@ -126,7 +132,6 @@ public class Visualizer implements EventHandler<ActionEvent> {
         if (tracked) {
             trackerText.setText(tracker.toString());
         }
-
     }
 
 
@@ -151,7 +156,7 @@ public class Visualizer implements EventHandler<ActionEvent> {
                         AbstractWorldElement element = map.objectAt(position);
                         if (element.getClass().equals(Animal.class)) {
                             if (((Animal) element).getGenotype().equals(statistics.getDominantGenotype())) {
-                                grid[x][y].highlight();
+                                grid[(x +xTiles- shiftX) % xTiles][(y +yTiles - shiftY) % yTiles].highlight();
                             }
                         }
                     }

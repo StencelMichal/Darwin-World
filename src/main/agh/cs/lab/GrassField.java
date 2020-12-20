@@ -11,7 +11,7 @@ public class GrassField {
 
     private final Map<Vector2d,Grass> jungleGrass = new HashMap<>();
 
-    private final AbstractWorldMap map;
+    private final TorusMap map;
 
     private final Random generator = new Random();
 
@@ -29,7 +29,7 @@ public class GrassField {
 
 
 
-    public GrassField(int width, int height, int jungleWidth, int jungleHeight, AbstractWorldMap map) {
+    public GrassField(int width, int height, int jungleWidth, int jungleHeight, TorusMap map) {
         this.jungleWidth = jungleWidth;
         this.jungleHeight = jungleHeight;
         this.height = height;

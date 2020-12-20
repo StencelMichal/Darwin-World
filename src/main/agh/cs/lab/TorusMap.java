@@ -1,20 +1,22 @@
 package agh.cs.lab;
 
-import java.util.NavigableSet;
+import com.google.common.collect.TreeMultimap;
 
-public class TorusMap extends AbstractWorldMap {
+import java.util.*;
 
-    private final int width;
+public class TorusMap implements IWorldMap, IAnimalChangeObserver, IAnimalDeadObserver {
 
-    private final int height;
-
-    private final GrassField grass;
+    private final TreeMultimap<Vector2d, Animal> animals =
+            TreeMultimap.create(new Vector2dComparator(), new AnimalComparator());
 
     private final Statistics statistics;
 
+    private final GrassField grass;
+
+    private final int height;
+    private final int width;
 
     public TorusMap(int width, int height, float jungleRatio, Statistics statistics) {
-        super();
         this.width = width;
         this.height = height;
         this.statistics = statistics;
@@ -22,6 +24,7 @@ public class TorusMap extends AbstractWorldMap {
         int jungleHeight = (int) (height * jungleRatio);
         grass = new GrassField(width, height, jungleWidth, jungleHeight, this);
     }
+
 
     public int getWidth() {
         return width;
@@ -31,15 +34,15 @@ public class TorusMap extends AbstractWorldMap {
         return height;
     }
 
-    @Override
-    public boolean place(Animal animal) {
-        animals.put(animal.getPosition(), animal);
-        animal.addMoveObserver(this);
-        animal.addDeadObserver(this);
-        animal.addDeadObserver(statistics);
-        statistics.addGenotype(animal.getGenotype());
-        return true;
+    public List<AbstractWorldElement> getAnimals() {
+        List<AbstractWorldElement> animals = new ArrayList<>(this.animals.values());
+        return Collections.unmodifiableList(animals);
     }
+
+    public int getAmountOfGrass(){
+        return grass.getAmountOfGrass();
+    }
+
 
     public void eatGrass(float energyFromGrass){
         for(Vector2d position : animals.keySet()){
@@ -67,12 +70,6 @@ public class TorusMap extends AbstractWorldMap {
         grass.addGrass();
     }
 
-    public int getAmountOfGrass(){
-        return grass.getAmountOfGrass();
-    }
-
-
-    @Override
     public Vector2d checkPosition(Vector2d newPosition) {
         int x = newPosition.x;
         int y = newPosition.y;
@@ -91,6 +88,56 @@ public class TorusMap extends AbstractWorldMap {
         }
 
         return new Vector2d(x, y);
+    }
+
+    public ArrayList<Animal> copulate(float copulateEnergy, MutableLong id){
+        ArrayList<Animal> newAnimals = new ArrayList<>();
+        for( Vector2d position : this.animals.keySet()){
+            NavigableSet<Animal> animalsOnField = this.animals.get(position);
+            if( animalsOnField.size() > 1){
+                Iterator<Animal> iterator = animalsOnField.descendingIterator();
+                Animal parent1 = iterator.next();
+                Animal parent2 = iterator.next();
+                if(parent1.getEnergy() >= copulateEnergy && parent2.getEnergy() >= copulateEnergy){
+                    Animal newAnimal = new Animal(this, parent1, parent2, id.getValue());
+                    id.increment();
+                    newAnimals.add(newAnimal);
+                }
+            }
+        }
+
+        return newAnimals;
+    }
+
+    public Animal animalAt(Vector2d position){
+        if (animals.get(position).size() > 0)
+            return animals.get(position).descendingIterator().next();
+        else return null;
+    }
+
+    @Override
+    public void place(Animal animal) {
+        animals.put(animal.getPosition(), animal);
+        animal.addMoveObserver(this);
+        animal.addDeadObserver(this);
+        animal.addDeadObserver(statistics);
+        statistics.addGenotype(animal.getGenotype());
+    }
+
+    @Override
+    public void animalDead(Animal animal) {
+        animals.get(animal.getPosition()).remove(animal);
+    }
+
+    @Override
+    public void positionChanged(Vector2d oldPosition, Animal animal){
+        animals.remove(oldPosition, animal);
+        animals.put(animal.getPosition(), animal);
+    }
+
+    @Override
+    public boolean isOccupied(Vector2d position) {
+        return objectAt(position) != null;
     }
 
     @Override

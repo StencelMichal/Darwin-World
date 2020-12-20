@@ -13,30 +13,34 @@ public class Animal extends AbstractWorldElement{
 
     private Pair<Animal,Animal> parents;
 
-    private final AbstractWorldMap map;
-
     protected final Genotype genotype;
 
     private MapDirection direction;
 
-    private long childrenAmount = 0;
+    private long childrenAmount;
 
-    private int lifeLength = 0;
+    private final TorusMap map;
+
+    private int lifeLength;
 
     private float energy;
 
+    private long id;
 
-    public Animal(AbstractWorldMap map, Vector2d initialPosition, float startEnergy, Genotype genotype){
+
+    public Animal(TorusMap map, Vector2d initialPosition, float startEnergy, Genotype genotype, long id){
         super(initialPosition);
         this.map = map;
+        this.id = id;
         energy = startEnergy;
         direction = MapDirection.values()[generator.nextInt(8)];
         childrenAmount = 0;
+        lifeLength = 0;
         this.genotype = Objects.requireNonNullElseGet(genotype, Genotype::new);
     }
 
-    public Animal(AbstractWorldMap map, Animal parent1, Animal parent2){
-        this(map,childPosition(map,parent1), 0, new Genotype(parent1.getGenotype(), parent2.getGenotype()));
+    public Animal(TorusMap map, Animal parent1, Animal parent2, long id){
+        this(map,childPosition(map,parent1), 0, new Genotype(parent1.getGenotype(), parent2.getGenotype()), id);
         this.parents = new Pair<>(parent1,parent2);
         transferEnergy(parent2, this);
         transferEnergy(parent1, this);
@@ -44,7 +48,7 @@ public class Animal extends AbstractWorldElement{
         parent1.newChild();
     }
 
-    private static Vector2d childPosition(AbstractWorldMap map, Animal parent1) {
+    private static Vector2d childPosition(TorusMap map, Animal parent1) {
         Vector2d parentPosition = parent1.getPosition();
         Vector2d childPosition = null;
         for(MapDirection direction : MapDirection.randomizedDirections()){
@@ -88,6 +92,11 @@ public class Animal extends AbstractWorldElement{
         return parents;
     }
 
+    public int getLifeLength() {
+        return lifeLength;
+    }
+
+
     public void subtractEnergy(float amount){
         energy -= amount;
         energy = Math.max(energy, 0);
@@ -95,10 +104,6 @@ public class Animal extends AbstractWorldElement{
 
     public void addEnergy(float amount){
         energy += amount;
-    }
-
-    public int getLifeLength() {
-        return lifeLength;
     }
 
     public long getChildrenAmount() {
@@ -153,23 +158,20 @@ public class Animal extends AbstractWorldElement{
         return false;
     }
 
-    @Override
-    public String toString() {
-        return direction.toString();
-    }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return Objects.equals(parents, animal.parents) &&
+        return id == animal.id &&
+                Objects.equals(parents, animal.parents) &&
                 Objects.equals(genotype, animal.genotype);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(parents, genotype);
+        return Objects.hash(parents, genotype, id);
     }
+
 }

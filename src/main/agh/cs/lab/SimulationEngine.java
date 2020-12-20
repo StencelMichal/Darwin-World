@@ -6,15 +6,15 @@ public class SimulationEngine implements IEngine{
 
     private final List<Animal> animals = new LinkedList<>();
 
-    private final float moveEnergy;
-
-    private final float energyFromGrass;
-
-    private final float copulateEnergy;
-
-    private final TorusMap map;
+    private final MutableLong animalId = new MutableLong(1);
 
     private final AnimalTracker tracker;
+    private final TorusMap map;
+
+    private final float energyFromGrass;
+    private final float moveEnergy;
+    private final float copulateEnergy;
+
 
     public SimulationEngine(TorusMap map, int startAnimals, float moveEnergy,
                             float startEnergy, float plantEnergy, AnimalTracker tracker){
@@ -37,7 +37,8 @@ public class SimulationEngine implements IEngine{
         }
 
         for (Vector2d position : positions) {
-            Animal animal = new Animal(map, position, startEnergy, null);
+            Animal animal = new Animal(map, position, startEnergy, null, animalId.getValue());
+            animalId.increment();
             animal.addDeadObserver(tracker);
             map.place(animal);
             animals.add(animal);
@@ -60,7 +61,7 @@ public class SimulationEngine implements IEngine{
         map.eatGrass(energyFromGrass);
 
         // copulate
-        ArrayList<Animal> newAnimals = map.copulate(copulateEnergy);
+        ArrayList<Animal> newAnimals = map.copulate(copulateEnergy, animalId);
         for (Animal newAnimal : newAnimals) {
             map.place(newAnimal);
             newAnimal.addDeadObserver(tracker);
