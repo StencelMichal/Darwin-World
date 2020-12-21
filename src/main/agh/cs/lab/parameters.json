@@ -2,9 +2,9 @@
   "width": 20,
   "height": 20,
   "jungleRatio" : 0.3,
-  "startEnergy" : 100,
-  "startAnimals" : 15,
-  "plantEnergy" : 20,
+  "startEnergy" : 60,
+  "startAnimals" : 100,
+  "plantEnergy" : 30,
   "moveEnergy" : 2.0,
   "numberOfSimulations": 1,
   "numberOfDays" : 10000

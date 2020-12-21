@@ -25,7 +25,7 @@ public class Animal extends AbstractWorldElement{
 
     private float energy;
 
-    private long id;
+    private final long id;
 
 
     public Animal(TorusMap map, Vector2d initialPosition, float startEnergy, Genotype genotype, long id){
@@ -96,6 +96,10 @@ public class Animal extends AbstractWorldElement{
         return lifeLength;
     }
 
+    public long getChildrenAmount() {
+        return childrenAmount;
+    }
+
 
     public void subtractEnergy(float amount){
         energy -= amount;
@@ -104,10 +108,6 @@ public class Animal extends AbstractWorldElement{
 
     public void addEnergy(float amount){
         energy += amount;
-    }
-
-    public long getChildrenAmount() {
-        return childrenAmount;
     }
 
     public void move(){
@@ -165,13 +165,11 @@ public class Animal extends AbstractWorldElement{
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
         return id == animal.id &&
-                Objects.equals(parents, animal.parents) &&
                 Objects.equals(genotype, animal.genotype);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(parents, genotype, id);
+        return Objects.hash(genotype, id);
     }
-
 }

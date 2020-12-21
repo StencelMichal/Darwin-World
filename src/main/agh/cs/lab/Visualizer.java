@@ -1,16 +1,11 @@
 package agh.cs.lab;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -32,25 +27,18 @@ public class Visualizer implements EventHandler<ActionEvent> {
     private final Text statisticsText;
     private final Text trackerText;
 
-    private final IWorldMap map;
-
-    private final Pane root;
-
-    private Animal selectedAnimal;
-
-    private boolean tracked = false;
-
-    private final Tile[][] grid;
-
-    private final Statistics statistics;
-
-    private final BooleanHolder stopped;
+    private final int shiftX;
+    private final int shiftY;
 
     private final AnimalTracker tracker;
+    private Animal selectedAnimal;
+    private boolean tracked = false;
 
-    private final int shiftX;
-
-    private final int shiftY;
+    private final IWorldMap map;
+    private final Pane root;
+    private final Tile[][] grid;
+    private final Statistics statistics;
+    private final BooleanHolder stopped;
 
 
     public Visualizer(IWorldMap map, Stage stage, int width, int height, float startEnergy, Statistics statistics,
@@ -59,10 +47,7 @@ public class Visualizer implements EventHandler<ActionEvent> {
         this.statistics = statistics;
         this.stopped = stopped;
         this.tracker = tracker;
-        System.out.println(width / 2);
-        System.out.println((int) ((width * jungleRatio) / 2));
         this.shiftX = (width / 2) + (int) ((width * jungleRatio) / 2);
-        System.out.println(shiftX);
         this.shiftY = (height / 2) + (int) ((height * jungleRatio) / 2);
         xTiles = width;
         yTiles = height;
@@ -92,6 +77,7 @@ public class Visualizer implements EventHandler<ActionEvent> {
 
         this.trackerText = addText(xTiles * tileSize + 25, 400);
 
+        // time gap slider
         Label timeGapLabel = new Label("Time gap: " + timeGap.getValue());
         timeGapLabel.setTranslateX(xTiles * tileSize + 245);
         timeGapLabel.setTranslateY(530);
@@ -104,8 +90,6 @@ public class Visualizer implements EventHandler<ActionEvent> {
         timeGapSlider.setMin(20);
         timeGapSlider.setValue(2000);
         timeGapSlider.setPrefSize(500, 30);
-        timeGapSlider.setBlockIncrement(10);
-        timeGapSlider.setMajorTickUnit(200);
         timeGapSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             timeGap.change(newValue.intValue());
             timeGapLabel.setText("Time gap: " + timeGap.getValue());
@@ -134,7 +118,6 @@ public class Visualizer implements EventHandler<ActionEvent> {
         }
     }
 
-
     public void trackOnPosition(Vector2d position) {
         if (map.isOccupied(position)) {
             AbstractWorldElement element = map.objectAt(position);
@@ -144,7 +127,6 @@ public class Visualizer implements EventHandler<ActionEvent> {
             }
         }
     }
-
 
     @Override
     public void handle(ActionEvent event) {
@@ -162,13 +144,15 @@ public class Visualizer implements EventHandler<ActionEvent> {
                     }
                 }
             }
-        } else if (event.getSource() == startStopButton) {
+        }
+        else if (event.getSource() == startStopButton) {
             stopped.switchValue();
             if (startStopButton.getText().equals("Start")) {
                 startStopButton.setText("Stop");
             } else
                 startStopButton.setText("Start");
-        } else if (event.getSource() == trackAnimalButton) {
+        }
+        else if (event.getSource() == trackAnimalButton) {
             tracker.track(selectedAnimal);
             tracked = true;
         }
@@ -184,7 +168,6 @@ public class Visualizer implements EventHandler<ActionEvent> {
         root.getChildren().add(button);
 
         return button;
-
     }
 
     private Text addText(int x, int y) {
@@ -195,7 +178,5 @@ public class Visualizer implements EventHandler<ActionEvent> {
         root.getChildren().add(text);
 
         return text;
-
-
     }
 }

@@ -1,6 +1,5 @@
 package agh.cs.lab;
 
-import javafx.scene.effect.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -11,20 +10,21 @@ public class Tile extends StackPane {
 
     private final float startEnergy;
     private final Rectangle border;
-    private final Text text = new Text();
+    private final Text text;
 
     public Tile(int x, int y, int tileSize, float startEnergy, Visualizer visualizer, int shiftX, int shiftY, int xTiles, int yTiles) {
         this.startEnergy = startEnergy;
-        border = new Rectangle(tileSize - 2, tileSize - 2);
+        this.border = new Rectangle(tileSize - 2, tileSize - 2);
+        this.text = new Text();
 
         text.setFont(Font.font(tileSize / 2));
-        text.setVisible(false);
         text.setText("X");
-
-        getChildren().addAll(border, text);
+        text.setVisible(false);
 
         setTranslateX(x * tileSize);
         setTranslateY(y * tileSize);
+
+        getChildren().addAll(border, text);
 
         setOnMouseClicked(e -> visualizer.trackOnPosition(new Vector2d((x + shiftX) % xTiles, (y + shiftY) % yTiles)));
 
@@ -34,10 +34,12 @@ public class Tile extends StackPane {
         if (element == null) {
             border.setFill(Color.hsb(55, 0.65, 0.51));
             text.setVisible(false);
-        } else if (element.getClass().equals(Grass.class)) {
+        }
+        else if (element.getClass().equals(Grass.class)) {
             border.setFill(Color.hsb(154, 0.92, 1.0));
             text.setVisible(false);
-        } else if (element.getClass().equals(Animal.class)) {
+        }
+        else if (element.getClass().equals(Animal.class)) {
             text.setVisible(true);
             double hue = Math.min(((Animal) element).getEnergy() * 100 / (3 * startEnergy), 100);
             border.setFill(Color.hsb(hue, 1.0, 1.0));

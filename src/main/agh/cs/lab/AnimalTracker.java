@@ -52,6 +52,8 @@ public class AnimalTracker implements IAnimalDeadObserver {
     @Override
     public String toString() {
         String ret = "Tracking animal:" + "\n" +
+                     "Genotype :" + "\n" +
+                      trackedAnimal.getGenotype().toString() + "\n" +
                      "Amount of children: " + (trackedAnimal.getChildrenAmount() - childrenBeforeTracking) + "\n" +
                      "Amount of descendants: " + (Descendants.size() - 1) + "\n";
         if (dead) {

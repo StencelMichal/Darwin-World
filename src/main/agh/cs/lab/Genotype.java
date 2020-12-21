@@ -11,6 +11,7 @@ public class Genotype {
 
     private final boolean[] ifGenePresent = new boolean[8];
 
+
     public Genotype() {
          for( int i=0; i<8; i++){
              genes[i] = i;

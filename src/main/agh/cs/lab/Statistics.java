@@ -4,27 +4,26 @@ import java.util.*;
 
 public class Statistics implements IAnimalDeadObserver{
 
-    private final HashMap<Genotype, Integer> genotypes;
+    private final HashMap<Genotype, Integer> genotypes = new HashMap<>();
 
     private final MutableInt day;
 
-    private double averageChildrenAmount;
-    private double averageLifeLength;
-    private long deadAnimalsAmount;
-    private double averageEnergy;
+    private double averageChildrenAmount = 0;
+    private double averageLifeLength = 0;
+    private long deadAnimalsAmount = 0;
+    private double averageEnergy = 0;
+    private int grassAmount = 0;
     private long animalsAmount;
-    private int grassAmount;
 
 
     public Statistics(int animalsAmount, MutableInt day) {
         this.day = day;
         this.animalsAmount = animalsAmount;
-        this.grassAmount = 0;
-        this.averageEnergy = 0;
-        this.averageLifeLength = 0;
-        this.averageChildrenAmount = 0;
-        this.deadAnimalsAmount = 0;
-        this.genotypes = new HashMap<>();
+    }
+
+
+    public double getAverageChildrenAmount() {
+        return averageChildrenAmount;
     }
 
     public long getAnimalsAmount() {
@@ -57,7 +56,9 @@ public class Statistics implements IAnimalDeadObserver{
 
     }
 
+
     public void update(List<Animal> animals, int newGrassAmount) {
+
         double newAverageEnergy = 0;
         double newAverageChildrenAmount = 0;
         for (Animal animal : animals) {
@@ -65,46 +66,16 @@ public class Statistics implements IAnimalDeadObserver{
             newAverageChildrenAmount += animal.getChildrenAmount();
         }
         newAverageEnergy /= animals.size();
+        newAverageChildrenAmount /= animals.size();
 
         animalsAmount = animals.size();
         averageEnergy = Math.round(newAverageEnergy * 100.0) / 100.0;
-        averageChildrenAmount = Math.round(newAverageChildrenAmount * 100.0 / animalsAmount) / 100.0;
+        averageChildrenAmount = Math.round(newAverageChildrenAmount * 100.0) / 100.0;
         grassAmount = newGrassAmount;
-//        addCurrentDominantGenotype(animals);
     }
-
-//    public void addCurrentDominantGenotype(List<Animal> animals){
-//        HashMap<Genotype, Integer> currentGenotypes = new HashMap<>();
-//        for (Animal animal : animals) {
-//            Genotype genotype = animal.getGenotype();
-//            if(currentGenotypes.containsKey(genotype)){
-//                currentGenotypes.put(genotype, currentGenotypes.get(genotype) + 1);
-//            }
-//            else{
-//                currentGenotypes.put(genotype, 1);
-//            }
-//        }
-//
-//        Genotype dominantGenotype = new Genotype();
-//        int maxValue = 0;
-//        for (Map.Entry<Genotype, Integer> entry : currentGenotypes.entrySet()) {
-//            if(entry.getValue() > maxValue){
-//                maxValue = entry.getValue();
-//                dominantGenotype = entry.getKey();
-//            }
-//        }
-//
-//        if(genotypes.containsKey(dominantGenotype)){
-//            genotypes.put(dominantGenotype, genotypes.get(dominantGenotype) + 1);
-//        }
-//        else{
-//            genotypes.put(dominantGenotype, 1);
-//        }
-//    }
 
     @Override
     public String toString() {
-        // genes
         return "Day: " + day + "\n" +
                 "Amount of animals: " + animalsAmount + "\n" +
                 "Amount of dead animals: " + deadAnimalsAmount + "\n" +
@@ -114,7 +85,6 @@ public class Statistics implements IAnimalDeadObserver{
                 "Average number of children: " + averageChildrenAmount + "\n" +
                 "Dominant genotype: "+ "\n" +
                 getDominantGenotype().toString() + "\n";
-
     }
 
     @Override

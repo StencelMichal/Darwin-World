@@ -34,11 +34,6 @@ public class TorusMap implements IWorldMap, IAnimalChangeObserver, IAnimalDeadOb
         return height;
     }
 
-    public List<AbstractWorldElement> getAnimals() {
-        List<AbstractWorldElement> animals = new ArrayList<>(this.animals.values());
-        return Collections.unmodifiableList(animals);
-    }
-
     public int getAmountOfGrass(){
         return grass.getAmountOfGrass();
     }
@@ -126,7 +121,7 @@ public class TorusMap implements IWorldMap, IAnimalChangeObserver, IAnimalDeadOb
 
     @Override
     public void animalDead(Animal animal) {
-        animals.get(animal.getPosition()).remove(animal);
+        animals.remove(animal.position, animal);
     }
 
     @Override

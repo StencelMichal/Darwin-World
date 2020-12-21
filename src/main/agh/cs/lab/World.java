@@ -43,7 +43,6 @@ public class World extends Application {
         TorusMap map = new TorusMap(width, height, jungleRatio, statistics);
         SimulationEngine engine = new SimulationEngine(map, startAnimals, moveEnergy, startEnergy, plantEnergy, tracker);
         Visualizer visualizer = new Visualizer(map, stage, width, height, startEnergy, statistics, stopped, day, tracker, timeGap, jungleRatio);
-//
 
 
         new Thread(() -> {
@@ -54,11 +53,6 @@ public class World extends Application {
                     e.printStackTrace();
                 }
                 day.increment();
-
-                //
-                System.out.println(map.getAnimals().size());
-
-                //
                 engine.nextDay();
                 statistics.update(engine.getAnimals(), engine.getCurrentAmountOfGrass());
                 averageStatistics.update(statistics);
@@ -67,7 +61,8 @@ public class World extends Application {
                     Thread.onSpinWait();
                 }
             }
-            averageStatistics.saveToFile(statistics);
+
+            averageStatistics.saveToFile();
             if (Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().edit(new File("average_statistics.txt"));

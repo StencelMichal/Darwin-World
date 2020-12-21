@@ -48,7 +48,6 @@ public class SimulationEngine implements IEngine{
     @Override
     public void nextDay() {
 
-
         // Remove dead animals
         animals.removeIf(Animal::checkIfDead);
 
@@ -72,12 +71,9 @@ public class SimulationEngine implements IEngine{
         // new plants
         map.addGrass();
 
-        // subtract move energy
+        // subtract move energy and increment life length
         for (Animal animal : animals) {
             animal.subtractEnergy(moveEnergy);
-        }
-
-        for (Animal animal : animals) {
             animal.nextDay();
         }
 

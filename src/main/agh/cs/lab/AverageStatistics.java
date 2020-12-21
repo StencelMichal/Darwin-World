@@ -4,20 +4,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class AverageStatistics {
 
     private final MutableInt day;
 
     private double animalsAmount = 0;
-
     private double grassAmount=0;
-
     private double averageEnergy=0;
-
     private double averageLifeLength=0;
-
     private double averageChildrenAmount=0;
+
+    HashMap<Genotype, Integer> dominantGenotypes = new HashMap<>();
 
 
     public AverageStatistics(MutableInt day){
@@ -42,11 +41,13 @@ public class AverageStatistics {
         averageLifeLength /= day.getValue();
 
         averageChildrenAmount *= (day.getValue() - 1);
-        averageChildrenAmount += statistics.getAnimalsAmount();
+        averageChildrenAmount += statistics.getAverageChildrenAmount();
         averageChildrenAmount /= day.getValue();
+
+        addGenotype(statistics.getDominantGenotype());
     }
 
-    public void saveToFile(Statistics statistics) {
+    public void saveToFile() {
         File stats = new File("average_statistics.txt");
         FileWriter writer;
         try {
@@ -57,7 +58,7 @@ public class AverageStatistics {
             writer.write("Energy per animal: " + round(averageEnergy) + "\n");
             writer.write("Life length: " + round(averageLifeLength) + "\n");
             writer.write("Number of children: " + round(averageChildrenAmount) + "\n");
-            writer.write("Dominant genotype: " + "\n" + statistics.getDominantGenotype().toString() + "\n");
+            writer.write("Dominant genotype: " + "\n" + getDominantGenotype().toString() + "\n");
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,8 +70,27 @@ public class AverageStatistics {
         return Math.round(value * 100.0) / 100.0;
     }
 
-//    private void updateParameter(double oldValue, double new)
+    private void addGenotype(Genotype genotype){
+        if(dominantGenotypes.containsKey(genotype)){
+            dominantGenotypes.put(genotype, dominantGenotypes.get(genotype) + 1);
+        }
+        else{
+            dominantGenotypes.put(genotype , 1);
+        }
+    }
 
+    private Genotype getDominantGenotype(){
+        Genotype dominantGenotype = null;
+        int maxAmount = 0;
+        for (Map.Entry<Genotype, Integer> integerEntry : dominantGenotypes.entrySet()) {
+            if(integerEntry.getValue() > maxAmount){
+                maxAmount = integerEntry.getValue();
+                dominantGenotype = integerEntry.getKey();
+            }
+        }
+
+        return dominantGenotype;
+    }
 
 
 }
