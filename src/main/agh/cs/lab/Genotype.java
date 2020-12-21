@@ -20,6 +20,7 @@ public class Genotype {
          for (int i=8; i<32; i++){
              genes[i] = generator.nextInt(8);
          }
+        Arrays.sort(this.genes);
     }
 
     public Genotype(Genotype g1, Genotype g2) {

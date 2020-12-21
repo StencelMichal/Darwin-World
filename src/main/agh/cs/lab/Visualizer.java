@@ -73,19 +73,19 @@ public class Visualizer implements EventHandler<ActionEvent> {
         this.trackAnimalButton = addNewButton("Track animal", xTiles * tileSize + 355, 20);
         trackAnimalButton.setVisible(false);
 
-        this.statisticsText = addText(xTiles * tileSize + 25, 140);
+        this.statisticsText = addText(xTiles * tileSize + 25, 120);
 
-        this.trackerText = addText(xTiles * tileSize + 25, 400);
+        this.trackerText = addText(xTiles * tileSize + 25, 375);
 
         // time gap slider
         Label timeGapLabel = new Label("Time gap: " + timeGap.getValue());
         timeGapLabel.setTranslateX(xTiles * tileSize + 245);
-        timeGapLabel.setTranslateY(530);
+        timeGapLabel.setTranslateY(535);
         timeGapLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
         root.getChildren().add(timeGapLabel);
         Slider timeGapSlider = new Slider();
         timeGapSlider.setTranslateX(xTiles * tileSize + 50);
-        timeGapSlider.setTranslateY(550);
+        timeGapSlider.setTranslateY(555);
         timeGapSlider.setMax(2000);
         timeGapSlider.setMin(20);
         timeGapSlider.setValue(2000);
