@@ -23,7 +23,7 @@ public class World extends Application {
 
     @Override
     public void start(Stage stage) throws ParseException, IOException {
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser();   // deja vu
         String jsonPath = new File("").getAbsolutePath();
         Reader reader = new FileReader(jsonPath + "/src/main/agh/cs/lab/parameters.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
@@ -62,7 +62,7 @@ public class World extends Application {
                 }
             }
 
-            averageStatistics.saveToFile();
+            averageStatistics.saveToFile(); // czy to jest zadanie świata?
             if (Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().edit(new File("average_statistics.txt"));

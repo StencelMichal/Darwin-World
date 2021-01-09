@@ -2,7 +2,7 @@ package agh.cs.lab;
 
 import com.google.common.collect.TreeMultimap;
 
-import java.util.*;
+import java.util.*; // nie importujemy *
 
 public class TorusMap implements IWorldMap, IAnimalChangeObserver, IAnimalDeadObserver {
 
@@ -92,7 +92,7 @@ public class TorusMap implements IWorldMap, IAnimalChangeObserver, IAnimalDeadOb
             if( animalsOnField.size() > 1){
                 Iterator<Animal> iterator = animalsOnField.descendingIterator();
                 Animal parent1 = iterator.next();
-                Animal parent2 = iterator.next();
+                Animal parent2 = iterator.next();   // jeśli jest kilka zwierząt z równą energią, to rodzice powinni być losowani
                 if(parent1.getEnergy() >= copulateEnergy && parent2.getEnergy() >= copulateEnergy){
                     Animal newAnimal = new Animal(this, parent1, parent2, id.getValue());
                     id.increment();

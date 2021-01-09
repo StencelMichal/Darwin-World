@@ -7,7 +7,7 @@ public class Genotype {
 
     private final int[] genes = new int[32];
 
-    private final Random generator = new Random();
+    private final Random generator = new Random();  // to pole mogłoby być statyczne
 
     private final boolean[] ifGenePresent = new boolean[8];
 
@@ -63,7 +63,7 @@ public class Genotype {
             ifGenePresent[gene] = true;
         }
 
-        for (boolean gene : ifGenePresent) {
+        for (boolean gene : ifGenePresent) {    // myląca nazwa
             if (!gene) {
                 return false;
             }

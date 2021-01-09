@@ -1,6 +1,6 @@
 package agh.cs.lab;
 
-public class MutableInt {
+public class MutableInt {   // po co to jest?
 
     private int value;
 

@@ -1,4 +1,4 @@
-package agh.cs.lab;
+package agh.cs.lab; // przydałby się podział na pakiety
 
 public class AbstractWorldElement {
 

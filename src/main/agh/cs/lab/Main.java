@@ -18,7 +18,7 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser();   // czy wczytywanie JSONa jest głównym zadaniem tego programu?
         String jsonPath = new File("").getAbsolutePath();
         Reader reader = new FileReader(jsonPath + "/src/main/agh/cs/lab/parameters.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);

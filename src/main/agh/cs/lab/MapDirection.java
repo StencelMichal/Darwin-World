@@ -7,7 +7,7 @@ import java.util.Collections;
 public enum MapDirection {
     NORTH,
     NORTH_EAST,
-    NORTH_WEST,
+    NORTH_WEST, // lepiej trzymać w jakiejś intuicyjnej kolejności
     SOUTH,
     SOUTH_EAST,
     SOUTH_WEST,
@@ -18,7 +18,7 @@ public enum MapDirection {
         Vector2d ret = null;
         switch(this){
             case NORTH:
-                ret = new Vector2d(0,1);
+                ret = new Vector2d(0,1);    // nowy wektor co wywołanie
                 break;
             case NORTH_EAST:
                 ret = new Vector2d(1,1);
@@ -78,7 +78,7 @@ public enum MapDirection {
         return ret;
     }
 
-    public static ArrayList<MapDirection> randomizedDirections(){
+    public static ArrayList<MapDirection> randomizedDirections(){   // potrzebuje Pan metody, która zwraca wszystkie kierunki w losowej kolejności?
         ArrayList<MapDirection> directions = new ArrayList<>(Arrays.asList(MapDirection.values()));
         Collections.shuffle(directions);
         return directions;
@@ -122,7 +122,7 @@ public enum MapDirection {
             case SOUTH:
                 ret = "v";
                 break;
-        }
+        }   // a pozostałe kierunki?
 
         return ret;
     }
